@@ -11,7 +11,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**") // Allow all endpoints
                 .allowedOrigins("http://localhost:3000") // Allow only React app running on port 5173 (Vite default)
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // Allow HTTP methods
-                .allowedHeaders("*")// Allow any headers
-        .allowCredentials(true);
+                .allowedHeaders("*"); // Allow any headers
     }
 }

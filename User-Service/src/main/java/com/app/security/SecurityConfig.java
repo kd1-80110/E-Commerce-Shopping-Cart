@@ -35,6 +35,8 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable()
+		.cors() // Enable CORS support
+        .and()
         .authorizeHttpRequests()
         .requestMatchers("/users/register", "/users/login").permitAll()
         .requestMatchers("/users/profile").hasAnyRole("ADMIN", "VENDOR", "USER")

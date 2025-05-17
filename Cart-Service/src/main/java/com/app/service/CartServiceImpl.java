@@ -239,4 +239,18 @@ public class CartServiceImpl implements CartService {
                 })
                 .collect(Collectors.toList());
     }
+    
+ // New method to remove a saved item
+ 	@Override
+ 	public void removeSavedItem(Long savedItemId, HttpServletRequest request) {
+ 		Long userId = getUserIdFromToken(request);
+ 		SavedItem savedItem = savedItemRepo.findById(savedItemId)
+ 				.orElseThrow(() -> new RuntimeException("Saved item not found"));
+
+ 		if (!savedItem.getUserId().equals(userId)) {
+ 			throw new RuntimeException("Not authorized to delete this saved item");
+ 		}
+
+ 		savedItemRepo.deleteById(savedItemId);
+ 	}
 }

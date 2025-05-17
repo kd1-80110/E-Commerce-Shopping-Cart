@@ -69,8 +69,15 @@ public class UserServiceImpl implements UserService {
 	public JwtResponse login(LoginDto loginDto) {
 		Authentication auth = authManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword()));
+		
+		org.springframework.security.core.userdetails.User userDetails = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+		
+		String role = userDetails.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .findFirst() // Assuming the user has only one role
+                .orElse("USER"); // Default to "USER" if no role is found
 
-		String token = jwtUtil.generateToken((org.springframework.security.core.userdetails.User) auth.getPrincipal());
+		 String token = jwtUtil.generateToken(userDetails, role);
 		return new JwtResponse(token);
 	}
 	

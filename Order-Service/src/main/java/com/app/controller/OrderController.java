@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +18,12 @@ import com.app.dto.OrderRequestDto;
 import com.app.dto.OrderResponseDto;
 import com.app.service.OrderService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/orders")
+@CrossOrigin
 public class OrderController {
 
 	@Autowired
@@ -37,9 +40,9 @@ public class OrderController {
 		return ResponseEntity.ok(orderService.getOrderDetails(orderId));
 	}
 
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<List<OrderResponseDto>> getOrderHistory(@PathVariable Long userId) {
-		return ResponseEntity.ok(orderService.getOrderHistory(userId));
+	@GetMapping("/user")
+	public ResponseEntity<List<OrderResponseDto>> getOrderHistory(HttpServletRequest request) {
+		return ResponseEntity.ok(orderService.getOrderHistory(request));
 	}
 
 	@PutMapping("/{orderId}/cancel")

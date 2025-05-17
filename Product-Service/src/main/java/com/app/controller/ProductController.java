@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ProductController {
 
 	@Autowired
@@ -36,6 +38,11 @@ public class ProductController {
 
 	@GetMapping
 	public ResponseEntity<List<ProductDto>> getAll() {
+		return ResponseEntity.ok(productService.getAllProducts());
+	}
+	
+	@GetMapping("/all")
+	public ResponseEntity<List<ProductDto>> getAlll() {
 		return ResponseEntity.ok(productService.getAllProducts());
 	}
 

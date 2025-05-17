@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.client.UserServiceProxy;
 import com.app.dto.AddressDto;
 import com.app.dto.OrderItemDto;
 import com.app.dto.OrderRequestDto;
@@ -16,6 +17,8 @@ import com.app.entity.Order;
 import com.app.entity.OrderItem;
 import com.app.repo.OrderItemRepository;
 import com.app.repo.OrderRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 @Transactional
@@ -26,6 +29,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+    
+    @Autowired
+    private UserServiceProxy userServiceProxy;
 
     @Override
     public Long createOrder(OrderRequestDto orderRequest) {
@@ -73,7 +79,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> getOrderHistory(Long userId) {
+    public List<OrderResponseDto> getOrderHistory(HttpServletRequest request) {
+    	Long userId = getUserIdFromToken(request);
         List<Order> orders = orderRepository.findByUserId(userId);
         return orders.stream()
                 .map(order -> {
@@ -81,6 +88,14 @@ public class OrderServiceImpl implements OrderService {
                     return convertToOrderResponseDto(order, orderItems);
                 })
                 .collect(Collectors.toList());
+    }
+    
+    private Long getUserIdFromToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return userServiceProxy.getUserIdFromToken(authorizationHeader);
+        }
+        throw new RuntimeException("User not authenticated");
     }
 
     @Override

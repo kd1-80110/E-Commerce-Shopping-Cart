@@ -18,9 +18,10 @@ public class JwtUtil {
     // Create SecretKey from the string
     private final SecretKey secretKey = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String role) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(secretKey, SignatureAlgorithm.HS256) // Use the SecretKey here

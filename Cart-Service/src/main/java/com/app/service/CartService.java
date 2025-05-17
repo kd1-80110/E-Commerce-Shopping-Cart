@@ -2,6 +2,8 @@ package com.app.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.app.dto.CartItemDto;
 import com.app.dto.CartItemResponseDto;
 import com.app.dto.SavedItemDto;
@@ -30,5 +32,7 @@ public interface CartService {
 //	List<CartItemDto> getCartItemsForUser(String authorizationHeader, Long userId);
 	
 	List<CartItemResponseDto> getCartItemsForUser(String authorizationHeader, Long userId);
+
+	void removeSavedItem(Long savedItemId, HttpServletRequest request);
 	
 }

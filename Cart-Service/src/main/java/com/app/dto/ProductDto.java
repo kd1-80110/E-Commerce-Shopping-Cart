@@ -18,8 +18,6 @@ public class ProductDto {
     private String name;
     private String description;
     private double price;
-//    private Size size;
-//    private Color color;
     private int quantity;
     private Category category;
     private String imageUrl;

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/cart")
+@CrossOrigin
 public class CartController {
 
 	@Autowired
@@ -89,4 +91,11 @@ public class CartController {
         List<CartItemResponseDto> cartItems = cartService.getCartItemsForUser(authorizationHeader, userId);
         return ResponseEntity.ok(cartItems);
     }
+    
+ // New endpoint to remove a saved item
+ 	@DeleteMapping("/remove-saved/{savedItemId}")
+ 	public ResponseEntity<Void> removeSavedItem(@PathVariable Long savedItemId, HttpServletRequest request) {
+ 		cartService.removeSavedItem(savedItemId, request);
+ 		return ResponseEntity.noContent().build();
+ 	}
 }
