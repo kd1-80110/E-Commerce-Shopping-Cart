@@ -62,6 +62,11 @@ public class CartServiceImpl implements CartService {
         if (productOptions.getColors() != null && !productOptions.getColors().contains(requestedColor)) {
             throw new IllegalArgumentException("Invalid color: " + requestedColor + " for product ID: " + cartItemDto.getProductId());
         }
+        
+     // Check if requested quantity exceeds available stock during add
+        if (cartItemDto.getQuantity() > product.getQuantity()) {
+            throw new IllegalArgumentException("Requested quantity exceeds available stock for product ID: " + cartItemDto.getProductId());
+        }
 
         CartItem cartItem = CartItem.builder()
                 .userId(userId)
@@ -76,6 +81,12 @@ public class CartServiceImpl implements CartService {
                 .orElse(null);
 
         if (savedItem != null) {
+        	int newQuantity = savedItem.getQuantity() + cartItemDto.getQuantity();
+            // Re-fetch product to get current stock before updating
+            ProductDto currentProduct = productServiceProxy.getProductById(cartItemDto.getProductId());
+            if (newQuantity > currentProduct.getQuantity()) {
+                throw new IllegalArgumentException("Total quantity in cart exceeds available stock for product ID: " + cartItemDto.getProductId());
+            }
             savedItem.setQuantity(savedItem.getQuantity() + cartItemDto.getQuantity());
             cartItem = cartItemRepo.save(savedItem);
         } else {
@@ -107,9 +118,15 @@ public class CartServiceImpl implements CartService {
             throw new RuntimeException("Access denied");
         }
 
+        // Fetch the product to get the current stock
+        ProductDto product = productServiceProxy.getProductById(cartItem.getProductId());
+
+        if (quantity > product.getQuantity()) {
+            throw new IllegalArgumentException("Requested quantity exceeds available stock for product ID: " + cartItem.getProductId());
+        }
+
         cartItem.setQuantity(quantity);
         CartItem updatedItem = cartItemRepo.save(cartItem);
-        ProductDto product = productServiceProxy.getProductById(updatedItem.getProductId());
         return mapCartItemToResponseDto(updatedItem, product);
     }
 

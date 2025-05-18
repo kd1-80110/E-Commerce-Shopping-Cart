@@ -2,8 +2,6 @@ package com.app.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.app.dto.CartItemDto;
 import com.app.dto.CartItemResponseDto;
 import com.app.dto.SavedItemDto;

@@ -48,11 +48,15 @@ public class CartController {
 	}
 
 	@PutMapping("/update/{cartItemId}")
-	public ResponseEntity<CartItemResponseDto> updateItemQuantity(@PathVariable Long cartItemId,
-			@RequestBody int quantity, HttpServletRequest request) {
-		return ResponseEntity.ok(cartService.updateCartItemQuantity(cartItemId, quantity, request));
-	}
-
+    public ResponseEntity<CartItemResponseDto> updateItemQuantity(@PathVariable Long cartItemId,
+                                                                    @RequestBody int quantity, HttpServletRequest request) {
+        try {
+            return ResponseEntity.ok(cartService.updateCartItemQuantity(cartItemId, quantity, request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Or a more specific error response with the message
+        }
+    }
+	
 	@DeleteMapping("/remove/{cartItemId}")
 	public ResponseEntity<Void> removeItem(@PathVariable Long cartItemId, HttpServletRequest request) {
 		cartService.removeCartItem(cartItemId, request);
